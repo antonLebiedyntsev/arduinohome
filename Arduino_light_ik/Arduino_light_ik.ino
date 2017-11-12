@@ -1,10 +1,9 @@
 #include "IRremote.h"
 
 const int relPin = 3;
-const int ikPin = 6;
+const int ikPin = 4;
 bool stat = true;
 IRrecv irrecv(ikPin); // указываем вывод, к которому подключен приемник
-
 decode_results results;
 
 void setup() {
@@ -17,18 +16,20 @@ void setup() {
 void blink(int times) {
   for (times; times > 0; times --){
       digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-      delay(40);                       // wait for a second
+      delay(20);                       // wait for a second
       digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-      delay(40); 
+      delay(20); 
   }
 }
 void loop() {
   
-  if ( irrecv.decode( &results )) { // data came
+  if ( irrecv.decode( &results )) {
+      int res = results.value;
       Serial.println( stat );
-      Serial.println( results.value); // print data
-      blink(3);
-      if ( results.value == 4294967295 ){
+      Serial.println( res, HEX ); // print data
+      
+      if (res == 0x52AD){
+          blink(3);
           if (stat == true ){
             digitalWrite(relPin, HIGH);
             stat = false;
